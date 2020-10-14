@@ -1,4 +1,4 @@
-function [wt_x, wt_y, wt_theta, wcoh, synch, mean_rel_phase, median_rel_phase,freqs2use] = win_synch_dev_2(x, y, srate, win,...
+function [wt_x, wt_y, wt_theta, wcoh, synch, mean_rel_phase, median_rel_phase,freqs2use] = win_synch(x, y, srate, win,...
     minfreq, maxfreq, mincycle, maxcycle, nfreqs,...
     loglinear, wavelet_length, do_plot, do_stats)
 % 'win_synch' is a method for conducting windowed multiscale synchrony
@@ -43,7 +43,7 @@ function [wt_x, wt_y, wt_theta, wcoh, synch, mean_rel_phase, median_rel_phase,fr
 % Neuroscience Methods, 111(2), 83?98.
 
 % set up parameters for phase synchrony
-nbins = floor(exp(0.626+0.4*log(win-1))); % Le Van Quen, 2001
+nbins = floor(exp(0.626+0.4*log(win-1))); % Recommended by Le Van Quyen et al., 2001
 edges = linspace(0, 1, nbins);
 
 % wavelet and FFT parameters
@@ -87,7 +87,7 @@ for fi=1:length(freqs2use)
     % create wavelet and take FFT
     s = num_cycles(fi)/(2*pi*freqs2use(fi));
     
-    % should I normalize the fft for length?
+    % normalize the fft for length
     wavelet_fft = fft(exp(2*1i*pi*freqs2use(fi).*time).* exp(-time.^2./(2*(s^2))),n_convolution);
     wavelet_fft = wavelet_fft./max(wavelet_fft);
     
@@ -106,7 +106,7 @@ for fi=1:length(freqs2use)
     phase_x(fi,:) = angle(sig1);
     phase_y(fi,:) = angle(sig2);
     
-    % TODO: compute cross-wavelet coherence
+    % compute cross-wavelet coherence
     wt_theta(fi,:) = angle(sig1.*conj(sig2));
     wt_x(fi, :) = sig1;
     wt_y(fi, :) = sig2;
@@ -132,7 +132,7 @@ for i = 1:length(freqs2use)
         smax = log(nbins);
         rho = (smax-s)/smax;
         
-        % compute magnitude squared ccoherence
+        % compute magnitude squared coherence
         mag_sq_coh = abs(mean(exp(1i*phasediff))).^2;
        
         % compute mean relative phase as circular mean
